@@ -1,0 +1,15 @@
+<Project>
+
+    <Target Name="BuildFrontend-Dev" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
+        <Message Text="------- Started building wwwroot" Importance="High" />
+        <Exec Command="yarn build" />
+        <Message Text="------- Finished building wwwroot" Importance="High" />
+    </Target>
+    
+    <Target Name="BuildFrontend" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Release'">
+        <Message Text="------- Started building wwwroot" Importance="High" />
+        <Exec Command="yarn publish" />
+        <Message Text="------- Finished building wwwroot" Importance="High" />
+    </Target>
+
+</Project>
