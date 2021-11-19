@@ -6,13 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpToWebPush.Shared", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpToWebPush.Server", "src\HttpToWebPush.Server\HttpToWebPush.Server.csproj", "{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{55DBAE73-4299-4146-B4EC-D8748D7C7659}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-		.gitignore = .gitignore
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
