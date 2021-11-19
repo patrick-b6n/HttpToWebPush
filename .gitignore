@@ -9,12 +9,12 @@ riderModule.iml
 /_ReSharper.Caches/
 
 # Frontend
-node_modules/
-.pnp
+**/node_modules
+**/.pnp
 .pnp.js
-.yarn/
-!.yarn/releases
-!.yarn/plugins
+**/.yarn/*
+!**/.yarn/releases
+!**/.yarn/plugins
 .pnp.*
 
 .DS_Store

@@ -21,5 +21,10 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+
+**/*.ts
+**/package.json
+**/tsconfig.json
+
 LICENSE
 README.md
