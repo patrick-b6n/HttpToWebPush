@@ -1,0 +1,158 @@
+﻿@page "/"
+@using HttpToWebPush.Shared.Features.Subscriptions
+@using HttpToWebPush.Shared.Features.Send
+
+@inject IJSRuntime _jsRuntime
+
+<Heading1>Channels</Heading1>
+
+<div class="mx-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100">
+        <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+            </th>
+
+            <th scope="col" class="relative px-6 py-3">
+            </th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+
+        @foreach (var channel in Enum.GetValues<Channel>())
+        {
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <img class="h-10 w-10 rounded-full" src="@(ChannelIconHelper.GetChannelIconPath(channel))" alt="@channel">
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                @channel
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                @if (_activeSubscriptions.Contains(channel))
+                {
+                    <td class="px-6 py-4 whitespace-nowrap w-1">
+                        <Button OnClickCallback="@(async () => await UnsubscribeFrom(channel))">Unsubscribe</Button>
+                    </td>
+                }
+                else
+                {
+                    <td class="px-6 py-4 whitespace-nowrap w-1">
+                        <Button OnClickCallback="@(async () => await SubscribeTo(channel))">Subscribe</Button>
+                    </td>
+                }
+
+                <td class="px-6 py-4 whitespace-nowrap w-1">
+                    <Button OnClickCallback="@(async () => await Test(channel))">Test</Button>
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+</div>
+
+@code
+{
+    private IEnumerable<Channel> _activeSubscriptions = Enumerable.Empty<Channel>();
+    private string _publicKey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await _http.GetAsync($"api/subscription/public-key");
+        response.EnsureSuccessStatusCode();
+        _publicKey = await response.Content.ReadAsStringAsync();
+
+        _activeSubscriptions = await FindSubscribedChannels();
+    }
+
+    private async Task SubscribeTo(Channel channel)
+    {
+        var pushSubscription = await _jsRuntime.InvokeAsync<PushSubscriptionJso?>("SubscriptionHelper.createSubscription", _publicKey);
+        if (pushSubscription == null)
+        {
+            Console.WriteLine("No PushManager subscription found");
+            return;
+        }
+
+        var response = await _http.PostAsJsonAsync($"api/subscription?channel={channel}", pushSubscription);
+        response.EnsureSuccessStatusCode();
+
+        _activeSubscriptions = await FindSubscribedChannels();
+    }
+
+    private async Task UnsubscribeFrom(Channel channel)
+    {
+        var pushSubscription = await _jsRuntime.InvokeAsync<PushSubscriptionJso?>("SubscriptionHelper.getCurrentSubscription");
+        if (pushSubscription == null)
+        {
+            Console.WriteLine("No PushManager subscription found");
+            return;
+        }
+
+        var response = await _http.DeleteAsJsonAsync($"api/subscription?channel={channel}", pushSubscription);
+        response.EnsureSuccessStatusCode();
+
+        _activeSubscriptions = await FindSubscribedChannels();
+    }
+
+    private async Task<IEnumerable<Channel>> FindSubscribedChannels()
+    {
+        var pushSubscription = await _jsRuntime.InvokeAsync<PushSubscriptionJso?>("SubscriptionHelper.getCurrentSubscription");
+        if (pushSubscription == null)
+        {
+            Console.WriteLine("No PushManager subscription found");
+            return Enumerable.Empty<Channel>();
+        }
+
+        var response = await _http.PostAsJsonAsync("api/subscription/find", pushSubscription.Endpoint);
+        response.EnsureSuccessStatusCode();
+
+        var subscribedChannels = await response.Content.ReadFromJsonAsync<List<Channel>>();
+        if (subscribedChannels == null)
+        {
+            await Console.Error.WriteLineAsync("Failed to fetch subscribed Channels");
+            return Enumerable.Empty<Channel>();
+        }
+
+        return subscribedChannels;
+    }
+
+    private async Task Test(Channel channel)
+    {
+        var pushSubscription = await _jsRuntime.InvokeAsync<PushSubscriptionJso?>("SubscriptionHelper.getCurrentSubscription");
+        if (pushSubscription == null)
+        {
+            Console.WriteLine("No PushManager subscription found");
+            return;
+        }
+
+        var dto = new SendNotificationToEndpointDto
+        {
+            Endpoint = pushSubscription.Endpoint,
+            SendNotificationDto = new SendNotificationDto
+            {
+                Urgency = Urgency.None,
+                Body = "Test Message",
+                Link = "http://google.de",
+                Title = "Test Title",
+                TimeToLiveSeconds = 0
+            }
+        };
+
+        var response = await _http.PostAsJsonAsync($"api/send/toEndpoint?channel={channel}", dto);
+        response.EnsureSuccessStatusCode();
+    }
+
+    record PushSubscriptionJso(string Endpoint, Dictionary<string, string> Keys);
+}

@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "autoprefixer": "10.4.0",
+    "esbuild": "^0.13.14",
+    "postcss": "8.3.11",
+    "tailwindcss": "2.2.19",
+    "typescript": "4.5.2"
+  },
+  "scripts": {
+    "build": "yarn build-css && yarn build-ts",
+    "build-css": "yarn exec tailwindcss --postcss -i ./wwwroot/css/tw.css -o ./wwwroot/css/site.min.css",
+    "build-ts": "yarn exec esbuild ./wwwroot/js/subscription.ts --bundle --outfile=wwwroot/js/out.js",
+    "watch-css": "yarn exec tailwindcss --postcss -i ./wwwroot/css/tw.css -o ./wwwroot/css/site.min.css --watch",
+    "watch-ts": "yarn exec esbuild ./wwwroot/js/subscription.ts --bundle --outfile=wwwroot/js/out.js --watch",
+    "watch-sw": "yarn exec esbuild ./wwwroot/sw.ts --bundle --outfile=wwwroot/sw.js --watch",
+    "publish": "yarn publish-css && yarn publish-ts && yarn publish-sw",
+    "publish-css": "yarn exec tailwindcss --postcss -i ./wwwroot/css/tw.css -o ./wwwroot/css/site.min.css --minify ",
+    "publish-ts": "yarn exec esbuild ./wwwroot/js/subscription.ts --bundle --outfile=wwwroot/js/out.js --minify",
+    "publish-sw": "yarn exec esbuild ./wwwroot/sw.ts --bundle --outfile=wwwroot/sw.js --minify"
+  },
+  "packageManager": "yarn@3.1.0"
+}

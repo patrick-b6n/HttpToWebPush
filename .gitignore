@@ -1,0 +1,28 @@
+# IDE
+.idea/
+
+# .NET
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+# Frontend
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# App
+*.Development.json
+*.js
+*.min.css

@@ -1,0 +1,10 @@
+﻿<div class="mb-5">
+    <h1 class="text-3xl font-bold tracking-wide">@ChildContent</h1>
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+
+}

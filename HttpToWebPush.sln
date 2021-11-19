@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpToWebPush.UI", "src\HttpToWebPush.UI\HttpToWebPush.UI.csproj", "{1AB18F77-837A-4559-B93C-01F7E06C2EB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpToWebPush.Shared", "src\HttpToWebPush.Shared\HttpToWebPush.Shared.csproj", "{D2F2A68F-27BA-4B81-91A5-BD05A5D2FF63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpToWebPush.Server", "src\HttpToWebPush.Server\HttpToWebPush.Server.csproj", "{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{55DBAE73-4299-4146-B4EC-D8748D7C7659}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AB18F77-837A-4559-B93C-01F7E06C2EB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB18F77-837A-4559-B93C-01F7E06C2EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB18F77-837A-4559-B93C-01F7E06C2EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB18F77-837A-4559-B93C-01F7E06C2EB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2F2A68F-27BA-4B81-91A5-BD05A5D2FF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F2A68F-27BA-4B81-91A5-BD05A5D2FF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F2A68F-27BA-4B81-91A5-BD05A5D2FF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F2A68F-27BA-4B81-91A5-BD05A5D2FF63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B82D8C34-7A06-4ED2-97E7-15EFEB0610FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

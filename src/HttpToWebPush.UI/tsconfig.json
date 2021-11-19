@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./wwwroot/js",
+    "target": "ES6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "lib": [
+      "es6",
+      "dom",
+      "webworker"
+    ],
+    "alwaysStrict": false,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "wwwroot/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

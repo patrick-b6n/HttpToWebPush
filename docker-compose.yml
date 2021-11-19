@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: http-to-web-push
+    ports:
+    - "5432:5432"
