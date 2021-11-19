@@ -25,4 +25,5 @@ yarn-error.log*
 # App
 *.Development.json
 *.js
+!*.config.js
 *.min.css
