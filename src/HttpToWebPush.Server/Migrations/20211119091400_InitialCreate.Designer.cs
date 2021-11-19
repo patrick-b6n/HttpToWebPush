@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HttpToWebPush.Server.Migrations
 {
-    [DbContext(typeof(PushCenterDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20211119091400_InitialCreate")]
     partial class InitialCreate
     {

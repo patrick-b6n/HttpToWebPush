@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using HttpToWebPush.Shared.Attributes;
 using HttpToWebPush.Shared.Features.Send;
 using HttpToWebPush.Shared.Features.Subscriptions;
 using Lib.Net.Http.WebPush;
@@ -7,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace HttpToWebPush.Server.Features.Send;
 
-public class PushMessageFactory
+public class PushMessageBuilder
 {
     private static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
@@ -21,14 +22,14 @@ public class PushMessageFactory
     private TimeSpan? _timeToLive;
     private Urgency _urgency;
 
-    private PushMessageFactory(string title, string message)
+    private PushMessageBuilder(string title, string message)
     {
         _title = title;
         _message = message;
         _urgency = Urgency.Normal;
     }
 
-    public static PushMessageFactory Create(string title, string message)
+    public static PushMessageBuilder Create(string title, string message)
     {
         if (string.IsNullOrEmpty(title))
         {
@@ -40,10 +41,10 @@ public class PushMessageFactory
             throw new ArgumentNullException(nameof(message));
         }
 
-        return new PushMessageFactory(title, message);
+        return new PushMessageBuilder(title, message);
     }
 
-    public PushMessageFactory WithLink(string link)
+    public PushMessageBuilder WithLink(string? link)
     {
         if (!string.IsNullOrEmpty(link))
         {
@@ -53,14 +54,14 @@ public class PushMessageFactory
         return this;
     }
 
-    public PushMessageFactory WithImageForType(Channel channel)
+    public PushMessageBuilder WithImageForType(Channel channel)
     {
         _iconUrl = ChannelIconHelper.GetChannelIconPath(channel);
 
         return this;
     }
 
-    public PushMessageFactory WithUrgency(Urgency urgency)
+    public PushMessageBuilder WithUrgency(Urgency urgency)
     {
         if (_urgency != Urgency.None)
         {
@@ -70,7 +71,7 @@ public class PushMessageFactory
         return this;
     }
 
-    public PushMessageFactory WithTimeToLive(TimeSpan timeToLive)
+    public PushMessageBuilder WithTimeToLive(TimeSpan timeToLive)
     {
         _timeToLive = timeToLive;
 
@@ -79,44 +80,37 @@ public class PushMessageFactory
 
     internal PushMessage Build()
     {
-        var model = new PushMessageContentModel
-        {
-            Title = _title,
-            Message = _message,
-            IconUrl = _iconUrl,
-            Link = _link
-        };
+        var model = new PushMessageContent
+        (
+            Message: _message,
+            Title: _title,
+            IconUrl: _iconUrl,
+            Link: _link
+        );
 
         var message = new PushMessage(JsonConvert.SerializeObject(model, JsonSerializerSettings))
         {
             TimeToLive = _timeToLive?.Seconds
         };
 
-        switch (_urgency)
+        message.Urgency = _urgency switch
         {
-            case Urgency.VeryLow:
-                message.Urgency = PushMessageUrgency.VeryLow;
-                break;
-            case Urgency.Low:
-                message.Urgency = PushMessageUrgency.Low;
-                break;
-            case Urgency.Normal:
-                message.Urgency = PushMessageUrgency.Normal;
-                break;
-            case Urgency.High:
-                message.Urgency = PushMessageUrgency.High;
-                break;
-        }
+            Urgency.VeryLow => PushMessageUrgency.VeryLow,
+            Urgency.Low => PushMessageUrgency.Low,
+            Urgency.Normal => PushMessageUrgency.Normal,
+            Urgency.High => PushMessageUrgency.High,
+            _ => PushMessageUrgency.Normal
+        };
 
         return message;
     }
 
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
-    private class PushMessageContentModel
-    {
-        public string Message { get; init; } = null!;
-        public string Title { get; init; } = null!;
-        public string? IconUrl { get; init; }
-        public string? Link { get; init; }
-    }
+    [JsonModel]
+    private readonly record struct PushMessageContent
+    (
+        string Message,
+        string Title,
+        string? IconUrl,
+        string? Link
+    );
 }

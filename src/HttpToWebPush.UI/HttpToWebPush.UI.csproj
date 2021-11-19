@@ -1,13 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-    <Import Project="..\..\build\web.targets" />
+    <Import Project="..\UI.Build.targets" />
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>HttpToWebPush.UI</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

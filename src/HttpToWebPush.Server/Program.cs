@@ -2,13 +2,19 @@ using HttpToWebPush.Server;
 using HttpToWebPush.Server.Common;
 using HttpToWebPush.Server.Features.Send;
 using HttpToWebPush.Server.Features.Subscriptions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ##################
+//      Services
+// ##################
 
-// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -18,7 +24,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.Configure<PushApiOptions>(builder.Configuration.GetSection("HttpToWebPush:PushApi"));
 
-builder.Services.AddDbContext<PushCenterDbContext>(
+builder.Services.AddDbContext<AppDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("HttpToWebPush"), b => b.MigrationsAssembly("HttpToWebPush.Server"))
 );
 
@@ -26,11 +32,12 @@ builder.Services.AddDbContext<PushCenterDbContext>(
 builder.Services.AddScoped<PushClient>();
 
 builder.Services.AddScoped<SubscriptionService>();
-builder.Services.AddScoped<SubscriptionTypeService>();
+
+// ##################
+//  Request Pipeline
+// ##################
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -43,9 +50,13 @@ app.UseStaticFiles();
 
 app.MapControllers();
 
+// ##################
+//      EF Core
+// ##################
+
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<PushCenterDbContext>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.Migrate();
 
     // needed for enum, see https://www.npgsql.org/efcore/mapping/enum.html
@@ -55,5 +66,9 @@ using (var scope = app.Services.CreateScope())
         conn.ReloadTypes();
     }
 }
+
+// ##################
+//       Start
+// ##################
 
 app.Run();

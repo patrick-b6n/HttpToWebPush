@@ -1,14 +1,18 @@
-﻿using HttpToWebPush.Shared.Features.Subscriptions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using HttpToWebPush.Shared.Features.Subscriptions;
 using Lib.Net.Http.WebPush;
+using Microsoft.Extensions.Logging;
 
 namespace HttpToWebPush.Server.Features.Subscriptions;
 
 public class SubscriptionService
 {
-    private readonly PushCenterDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly ILogger<SubscriptionService> _logger;
 
-    public SubscriptionService(PushCenterDbContext dbContext, ILogger<SubscriptionService> logger)
+    public SubscriptionService(AppDbContext dbContext, ILogger<SubscriptionService> logger)
     {
         _dbContext = dbContext;
         _logger = logger;

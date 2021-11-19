@@ -1,4 +1,7 @@
-﻿using HttpToWebPush.Server.Common;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using HttpToWebPush.Server.Common;
 using HttpToWebPush.Shared.Features.Subscriptions;
 using Lib.Net.Http.WebPush;
 using Microsoft.AspNetCore.Mvc;
@@ -21,13 +24,10 @@ public class SubscriptionController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Unsubscribe([FromQuery] Channel? channel,
-                                                 [FromBody] PushSubscription? subscription)
+    public async Task<IActionResult> Unsubscribe([Required] [FromQuery] Channel channel,
+                                                 [Required] [FromBody] PushSubscription subscription)
     {
-        if (channel == null) throw new ArgumentNullException(nameof(channel));
-        if (subscription == null) throw new ArgumentNullException(nameof(subscription));
-
-        await _subscriptionService.Delete(subscription, channel.Value);
+        await _subscriptionService.Delete(subscription, channel);
 
         return Ok();
     }
@@ -39,12 +39,10 @@ public class SubscriptionController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Subscribe([FromQuery] Channel? channel, [FromBody] PushSubscription? subscription)
+    public async Task<IActionResult> Subscribe([Required] [FromQuery] Channel channel,
+                                               [Required] [FromBody] PushSubscription subscription)
     {
-        if (channel == null) throw new ArgumentNullException(nameof(channel));
-        if (subscription == null) throw new ArgumentNullException(nameof(subscription));
-
-        await _subscriptionService.Save(subscription, channel.Value);
+        await _subscriptionService.Save(subscription, channel);
 
         return Ok();
     }

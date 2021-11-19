@@ -1,18 +1,20 @@
 ﻿using HttpToWebPush.Server.Features.Subscriptions;
 using HttpToWebPush.Shared.Features.Subscriptions;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace HttpToWebPush.Server;
 
-public sealed class PushCenterDbContext : DbContext
+[UsedImplicitly(ImplicitUseTargetFlags.Members)]
+public sealed class AppDbContext : DbContext
 {
-    static PushCenterDbContext()
+    static AppDbContext()
     {
-        NpgsqlConnection.GlobalTypeMapper.MapEnum<Channel>("channel");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<Channel>();
     }
 
-    public PushCenterDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions options) : base(options)
     {
     }
 

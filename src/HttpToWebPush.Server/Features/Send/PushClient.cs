@@ -1,21 +1,26 @@
-﻿using HttpToWebPush.Server.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HttpToWebPush.Server.Common;
 using HttpToWebPush.Server.Features.Subscriptions;
 using Lib.Net.Http.WebPush;
 using Lib.Net.Http.WebPush.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace HttpToWebPush.Server.Features.Send;
 
 public class PushClient : PushServiceClient
 {
-    private readonly PushCenterDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
     private readonly ILogger<PushClient> _logger;
     private readonly VapidAuthentication _vapidAuthentication;
 
     public PushClient(IHttpClientFactory client,
                       IOptions<PushApiOptions> options,
-                      PushCenterDbContext dbContext,
+                      AppDbContext dbContext,
                       ILogger<PushClient> logger) : base(client.CreateClient())
     {
         _logger = logger;
@@ -27,7 +32,7 @@ public class PushClient : PushServiceClient
         };
     }
 
-    public async Task Send(IEnumerable<SubscriptionEntity> subscriptions, PushMessageFactory pushMessageFactory)
+    public async Task Send(IEnumerable<SubscriptionEntity> subscriptions, PushMessageBuilder pushMessageBuilder)
     {
         var pushSubs = subscriptions.Select(Map).ToList();
 
@@ -37,7 +42,7 @@ public class PushClient : PushServiceClient
         {
             try
             {
-                await RequestPushMessageDeliveryAsync(subscription, pushMessageFactory.Build(), _vapidAuthentication);
+                await RequestPushMessageDeliveryAsync(subscription, pushMessageBuilder.Build(), _vapidAuthentication);
             }
             catch (PushServiceClientException e)
             {
@@ -54,9 +59,9 @@ public class PushClient : PushServiceClient
         }
     }
 
-    public Task Send(SubscriptionEntity subscription, PushMessageFactory pushMessageFactory)
+    public Task Send(SubscriptionEntity subscription, PushMessageBuilder pushMessageBuilder)
     {
-        return Send(new[] { subscription }, pushMessageFactory);
+        return Send(new[] { subscription }, pushMessageBuilder);
     }
 
     private static PushSubscription Map(SubscriptionEntity subscription)

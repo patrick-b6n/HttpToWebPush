@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using HttpToWebPush.Shared.Features.Subscriptions
 @using HttpToWebPush.Shared.Features.Send
+@using HttpToWebPush.Shared.Attributes
 
 @inject IJSRuntime _jsRuntime
 
@@ -44,17 +45,18 @@
                     <td class="px-6 py-4 whitespace-nowrap w-1">
                         <Button OnClickCallback="@(async () => await UnsubscribeFrom(channel))">Unsubscribe</Button>
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap w-1">
+                        <Button OnClickCallback="@(async () => await Test(channel))">Test</Button>
+                    </td>
                 }
                 else
                 {
-                    <td class="px-6 py-4 whitespace-nowrap w-1">
+                    <td class="px-6 py-4 whitespace-nowrap w-1" colspan="2">
                         <Button OnClickCallback="@(async () => await SubscribeTo(channel))">Subscribe</Button>
                     </td>
                 }
 
-                <td class="px-6 py-4 whitespace-nowrap w-1">
-                    <Button OnClickCallback="@(async () => await Test(channel))">Test</Button>
-                </td>
+
             </tr>
         }
 
@@ -65,11 +67,11 @@
 @code
 {
     private IEnumerable<Channel> _activeSubscriptions = Enumerable.Empty<Channel>();
-    private string _publicKey;
+    private string _publicKey = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await _http.GetAsync($"api/subscription/public-key");
+        var response = await _http.GetAsync("api/subscription/public-key");
         response.EnsureSuccessStatusCode();
         _publicKey = await response.Content.ReadAsStringAsync();
 
@@ -115,7 +117,7 @@
             return Enumerable.Empty<Channel>();
         }
 
-        var response = await _http.PostAsJsonAsync("api/subscription/find", pushSubscription.Endpoint);
+        var response = await _http.PostAsJsonAsync("api/subscription/find", pushSubscription.Value.Endpoint);
         response.EnsureSuccessStatusCode();
 
         var subscribedChannels = await response.Content.ReadFromJsonAsync<List<Channel>>();
@@ -139,14 +141,13 @@
 
         var dto = new SendNotificationToEndpointDto
         {
-            Endpoint = pushSubscription.Endpoint,
+            Endpoint = pushSubscription.Value.Endpoint,
             SendNotificationDto = new SendNotificationDto
             {
                 Urgency = Urgency.None,
                 Body = "Test Message",
-                Link = "http://google.de",
-                Title = "Test Title",
-                TimeToLiveSeconds = 0
+                Link = "https://google.de",
+                Title = "Test Title"
             }
         };
 
@@ -154,5 +155,6 @@
         response.EnsureSuccessStatusCode();
     }
 
-    record PushSubscriptionJso(string Endpoint, Dictionary<string, string> Keys);
+    [JsonModel]
+    readonly record struct PushSubscriptionJso(string Endpoint, Dictionary<string, string> Keys);
 }

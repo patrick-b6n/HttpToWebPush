@@ -1,4 +1,6 @@
-﻿namespace HttpToWebPush.Shared.Features.Subscriptions;
+﻿using System;
+
+namespace HttpToWebPush.Shared.Features.Subscriptions;
 
 public static class ChannelIconHelper
 {

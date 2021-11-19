@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HttpToWebPush.Server.Migrations
 {
-    [DbContext(typeof(PushCenterDbContext))]
+    [DbContext(typeof(AppDbContext))]
     partial class PushCenterDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
