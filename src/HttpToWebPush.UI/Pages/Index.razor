@@ -43,7 +43,7 @@
                 @if (_activeSubscriptions.Contains(channel))
                 {
                     <td class="px-6 py-4 whitespace-nowrap w-1">
-                        <Button OnClickCallback="@(async () => await UnsubscribeFrom(channel))">Unsubscribe</Button>
+                        <Button BackgroundColor="Button.ButtonBackgroundColor.Red" OnClickCallback="@(async () => await UnsubscribeFrom(channel))">Unsubscribe</Button>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap w-1">
                         <Button OnClickCallback="@(async () => await Test(channel))">Test</Button>
@@ -52,7 +52,7 @@
                 else
                 {
                     <td class="px-6 py-4 whitespace-nowrap w-1" colspan="2">
-                        <Button OnClickCallback="@(async () => await SubscribeTo(channel))">Subscribe</Button>
+                        <Button BackgroundColor="Button.ButtonBackgroundColor.Green" OnClickCallback="@(async () => await SubscribeTo(channel))">Subscribe</Button>
                     </td>
                 }
 
@@ -117,7 +117,7 @@
             return Enumerable.Empty<Channel>();
         }
 
-        var response = await _http.PostAsJsonAsync("api/subscription/find", pushSubscription.Value.Endpoint);
+        var response = await _http.PostAsJsonAsync("api/subscription/find", pushSubscription.Endpoint);
         response.EnsureSuccessStatusCode();
 
         var subscribedChannels = await response.Content.ReadFromJsonAsync<List<Channel>>();
@@ -140,21 +140,22 @@
         }
 
         var dto = new SendNotificationToEndpointDto
-        {
-            Endpoint = pushSubscription.Value.Endpoint,
-            SendNotificationDto = new SendNotificationDto
-            {
-                Urgency = Urgency.None,
-                Body = "Test Message",
-                Link = "https://google.de",
-                Title = "Test Title"
-            }
-        };
+            (
+            Endpoint: pushSubscription.Endpoint,
+            SendNotificationDto: new SendNotificationDto
+                (
+                Urgency: Urgency.None,
+                Body: "Test Message",
+                Link: "https://google.de",
+                Title: "Test Title",
+                TimeToLiveSeconds: 0
+                )
+            );
 
         var response = await _http.PostAsJsonAsync($"api/send/toEndpoint?channel={channel}", dto);
         response.EnsureSuccessStatusCode();
     }
 
     [JsonModel]
-    readonly record struct PushSubscriptionJso(string Endpoint, Dictionary<string, string> Keys);
+    record PushSubscriptionJso(string Endpoint, Dictionary<string, string> Keys);
 }

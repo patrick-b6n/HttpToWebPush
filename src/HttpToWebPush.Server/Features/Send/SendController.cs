@@ -30,7 +30,7 @@ public class SendController : ControllerBase
     public async Task<IActionResult> SendNotification([Required] [FromQuery] Channel channel,
                                                       [Required] [FromBody] SendNotificationDto dto)
     {
-        _logger.LogDebug("Received send-notification requests for type '{type}'", channel);
+        _logger.LogDebug("Received send-notification requests for type '{Type}'", channel);
 
         var message = BuildMessage(channel, dto);
 
@@ -45,7 +45,7 @@ public class SendController : ControllerBase
     {
         const Channel channel = Channel.Grafana;
 
-        _logger.LogDebug("Received send-notification requests for type '{channel}'", channel);
+        _logger.LogDebug("Received send-notification requests for type '{Channel}'", channel);
 
         var message = BuildMessage(channel, dto);
 
@@ -59,14 +59,14 @@ public class SendController : ControllerBase
     public async Task<IActionResult> SendNotificationToSubscriber([Required] [FromQuery] Channel channel,
                                                                   [Required] [FromBody] SendNotificationToEndpointDto dto)
     {
-        _logger.LogDebug("Received send-notification requests for type '{type}'", channel);
+        _logger.LogDebug("Received send-notification requests for type '{Type}'", channel);
 
         var message = BuildMessage(channel, dto.SendNotificationDto);
 
         var subscription = _subscriptionService.Find(dto.Endpoint, channel);
         if (subscription == null)
         {
-            _logger.LogError("Subscription not available for endpoint '{endpoint}' and type '{subscriptionType}'", dto.Endpoint, channel);
+            _logger.LogError("Subscription not available for endpoint '{Endpoint}' and type '{SubscriptionType}'", dto.Endpoint, channel);
             return BadRequest();
         }
 

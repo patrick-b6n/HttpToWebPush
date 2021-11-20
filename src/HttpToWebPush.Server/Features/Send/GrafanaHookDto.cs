@@ -9,7 +9,7 @@ namespace HttpToWebPush.Server.Features.Send;
 ///     Based on http://docs.grafana.org/alerting/notifications/
 /// </summary>
 [SwaggerSchemaFilter(typeof(GrafanaHookSchemaFilter))]
-public readonly record struct GrafanaHookDto
+public record GrafanaHookDto
 (
     string Title,
     string RuleName,

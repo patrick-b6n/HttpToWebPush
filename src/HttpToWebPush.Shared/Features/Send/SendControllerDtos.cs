@@ -9,7 +9,7 @@ public enum Urgency
     High = 4
 }
 
-public readonly record struct SendNotificationDto
+public record SendNotificationDto
 (
     string Body,
     string Title,
@@ -18,7 +18,7 @@ public readonly record struct SendNotificationDto
     int TimeToLiveSeconds
 );
 
-public readonly record struct SendNotificationToEndpointDto
+public record SendNotificationToEndpointDto
 (
     string Endpoint,
     SendNotificationDto SendNotificationDto

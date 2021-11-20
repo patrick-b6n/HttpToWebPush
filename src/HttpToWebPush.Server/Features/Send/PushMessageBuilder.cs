@@ -106,7 +106,7 @@ public class PushMessageBuilder
     }
 
     [JsonModel]
-    private readonly record struct PushMessageContent
+    private record PushMessageContent
     (
         string Message,
         string Title,
